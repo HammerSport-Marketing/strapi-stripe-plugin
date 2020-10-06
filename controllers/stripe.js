@@ -21,5 +21,49 @@ module.exports = {
     ctx.send({
       message: 'ok'
     });
+  },
+
+  /**
+   *  Add Stripe Settings Controller
+   */
+  updateSettings: async (ctx) => {
+    const { user } = ctx.state
+    const { pk } = ctx.request.body
+    // Ensure user is admin
+    if (user.roles[0].id != 1) {
+      return ctx.unauthorized("Only administrators allowed.")
+    }
+    if (!pk) {
+      return ctx.throw(400, "Please provide a private key.")
+    }
+    const pluginStore = strapi.store({
+      environment: strapi.config.environment,
+      type: 'plugin',
+      name: 'stripe' // Recomment prefixing hammersport-stripe
+    })
+    const result = await pluginStore.set({ key: 'pk', value: pk })
+    ctx.send({
+      result
+    })
+  },
+
+  retrieveSettings : async (ctx) => {
+    const {user} = ctx.state
+
+    if (user.roles[0].id != 1) {
+      return ctx.unauthorized("Only administrators allowed.")
+    }
+    const pluginStore = strapi.store({
+      environment: strapi.config.environment,
+      type: 'plugin',
+      name: 'stripe'
+    })
+
+    const pk = await pluginStore.get({key: 'pk'})
+
+    ctx.send({
+      pk: pk ? pk: ''
+    })
   }
 };
+
