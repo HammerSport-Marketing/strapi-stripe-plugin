@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@buffetjs/core": "^3.3.1",
+    "stripe": "^8.107.0",
     "styled-components": "^5.2.0"
   },
   "author": {
